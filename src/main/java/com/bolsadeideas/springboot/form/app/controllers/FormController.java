@@ -11,15 +11,21 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 import com.bolsadeideas.springboot.form.app.models.domain.Usuario;
 
 @Controller
+@SessionAttributes("usuario")
 public class FormController {
 
 	@GetMapping("/form")
 	public String form(Model model) {
 		Usuario usuario = new Usuario();
+		usuario.setNombre("Pedro");
+		usuario.setApellido("Flores");
+		usuario.setIdentificador("123.654-pfc");
 		model.addAttribute("titulo", "Formulario usuarios");
 		model.addAttribute("usuario",usuario);
 		return "form";
@@ -50,7 +56,8 @@ public class FormController {
 	//Los parametros se deben de llamar igual
 	
 	@PostMapping("/form")
-	public String procesar(@Valid Usuario usuario,BindingResult result, Model model) {
+	public String procesar(@Valid Usuario usuario,BindingResult result, Model model, 
+			SessionStatus status) {
 		
 		model.addAttribute("titulo", "Resultado Form");
 			if (result.hasErrors()) {
@@ -62,6 +69,7 @@ public class FormController {
 				return "form";
 			}
 			model.addAttribute("usuario",usuario);
+			status.setComplete();
 			
 		return "resultado";
 	}
